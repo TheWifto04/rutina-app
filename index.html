@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Rutina Diaria</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56,189,248,0.15);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --success: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+    .app {
+      width: 100%;
+      max-width: 480px;
+      background: linear-gradient(145deg, rgba(15,23,42,0.95), rgba(15,23,42,0.85));
+      border-radius: 18px;
+      padding: 16px 16px 20px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.6);
+      border: 1px solid rgba(148,163,184,0.25);
+      backdrop-filter: blur(18px);
+    }
+    .hidden { display: none; }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .title { font-size: 1.1rem; font-weight: 600; }
+    .subtitle { font-size: 0.8rem; color: var(--muted); }
+    .date { font-size: 0.8rem; color: var(--muted); text-align: right; }
+
+    .section-title {
+      font-size: 0.9rem;
+      margin: 12px 0 6px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .block-list { display: flex; flex-direction: column; gap: 8px; }
+    .block {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 10px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid rgba(31,41,55,0.9);
+    }
+    .block-left { display: flex; flex-direction: column; }
+    .block-label { font-size: 0.9rem; }
+    .block-time { font-size: 0.75rem; color: var(--muted); }
+    .checkbox {
+      width: 20px; height: 20px;
+      border-radius: 6px;
+      border: 1px solid rgba(148,163,184,0.7);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .checkbox.checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .config-btn {
+      margin-top: 12px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(56,189,248,0.4);
+      cursor: pointer;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .config-screen { padding: 10px; }
+    .back-btn {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: var(--card);
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.4);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .class-item {
+      padding: 8px;
+      border-radius: 10px;
+      background: var(--card);
+      border: 1px solid rgba(148,163,184,0.3);
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .field-group {
+      margin-bottom: 10px;
+    }
+    .field-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .field-input, .field-select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      font-size: 0.85rem;
+    }
+    .btn-small {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PANTALLA PRINCIPAL -->
+  <div class="app" id="mainScreen">
+    <div class="header">
+      <div>
+        <div class="title">Rutina diaria</div>
+        <div class="subtitle" id="dayLabel"></div>
+      </div>
+      <div class="date" id="dateLabel"></div>
+    </div>
+
+    <div class="section-title">Bloques del día</div>
+    <div class="block-list" id="blockList"></div>
+
+    <div class="config-btn" id="openConfig">⚙️ Configuración</div>
+  </div>
+
+  <!-- PANTALLA CONFIGURACIÓN -->
+  <div class="app hidden" id="configScreen">
+    <div class="config-screen">
+      <div class="back-btn" id="backBtn">← Volver</div>
+
+      <div class="section-title">Horario de clases de hoy</div>
+      <div id="classList"></div>
+
+      <div class="section-title">Día a configurar</div>
+      <div class="field-group">
+        <div class="field-label">Selecciona día</div>
+        <select id="configDay" class="field-select">
+          <option value="dilluns">Dilluns</option>
+          <option value="dimarts">Dimarts</option>
+          <option value="dimecres">Dimecres</option>
+          <option value="dijous">Dijous</option>
+          <option value="divendres">Divendres</option>
+        </select>
+      </div>
+
+      <div class="section-title">Rutina de gimnasio</div>
+      <div class="field-group">
+        <div class="field-label">Descripción</div>
+        <input id="gymInput" class="field-input" placeholder="Ej: Pecho y hombro">
+        <button class="btn-small" id="saveGym">Guardar rutina</button>
+        <div class="note" id="gymNote"></div>
+      </div>
+
+      <div class="section-title">Comida del día</div>
+      <div class="field-group">
+        <div class="field-label">Comida</div>
+        <input id="mealInput" class="field-input" placeholder="Ej: Arroz con pollo">
+        <button class="btn-small" id="saveMeal">Guardar comida</button>
+        <div class="note" id="mealNote"></div>
+      </div>
+
+      <div class="section-title">Notificaciones</div>
+      <button class="btn-small" id="notifyBtn">Probar notificación</button>
+      <div class="note">En iOS puede que solo funcione si está instalado como app y con permisos activos.</div>
+    </div>
+  </div>
+
+  <script>
+    /* -------------------------
+       HORARIO DE CLASES
+    --------------------------*/
+    const horarioClases = {
+      dilluns: {
+        "15:00": "ICA0_ASO — José Moreno",
+        "16:00": "Tutoria — Francesc Barragan",
+        "17:00": "Descans",
+        "18:00": "ICA0_WEB — Isaac Pulí",
+        "19:00": "ICA0_WEB — Isaac Pulí",
+        "20:00": "ICA0_SEG — Joan Pou"
+      },
+      dimarts: {
+        "15:00": "ICA0_WEB — Isaac Pulí",
+        "16:00": "ICA0_DIG — Pere Sánchez",
+        "17:00": "Descans",
+        "18:00": "ICA0_SEG — Joan Pou",
+        "19:00": "ICA0_SEG — Joan Pou"
+      },
+      dimecres: {
+        "15:00": "IPO 2 — Montse Bermúdez",
+        "16:00": "IPO 2 — Montse Bermúdez",
+        "17:00": "Descans",
+        "18:00": "ICA0_ASO — José Moreno",
+        "19:00": "ICA0_ASO — José Moreno"
+      },
+      dijous: {
+        "15:00": "ICA0_SRV — Francesc Barragan",
+        "16:00": "ICA0_SRV — Francesc Barragan",
+        "17:00": "Descans",
+        "18:00": "ICA0_HW — Josep Catà",
+        "19:00": "ICA0_HW — Josep Catà",
+        "20:00": "ICA0_HW — Josep Catà"
+      },
+      divendres: {
+        "15:00": "ICA0_ASO — José Moreno",
+        "16:00": "ICA0_ASO — José Moreno",
+        "17:00": "Descans",
+        "18:00": "ICA0_ASO — José Moreno",
+        "19:00": "ICA0_SRV — Francesc Barragan"
+      }
+    };
+
+    /* -------------------------
+       BLOQUES DEL DÍA
+    --------------------------*/
+    const defaultBlocks = [
+      { id: 'gym', label: 'Gimnasio', start: '08:30', end: '10:00' },
+      { id: 'read', label: 'Lectura', start: '10:30', end: '12:00' },
+      { id: 'house', label: 'Faena / casa', start: '12:00', end: '13:00' },
+      { id: 'class', label: 'Clases', start: '15:00', end: '20:30' },
+      { id: 'relax', label: 'Desconexión', start: '22:00', end: '23:00' }
+    ];
+
+    const STORAGE_KEY_BLOCKS = 'rutina_bloques';
+    const STORAGE_KEY_GYM = 'rutina_gym';
+    const STORAGE_KEY_MEALS = 'rutina_meals';
+
+    function getTodayNameKey() {
+      const d = new Date().getDay();
+      return ['diumenge','dilluns','dimarts','dimecres','dijous','divendres','dissabte'][d];
+    }
+
+    function renderDate() {
+      const d = new Date();
+      const dias = ['Diumenge','Dilluns','Dimarts','Dimecres','Dijous','Divendres','Dissabte'];
+      const meses = ['gener','febrer','març','abril','maig','juny','juliol','agost','setembre','octubre','novembre','desembre'];
+      document.getElementById('dayLabel').textContent = dias[d.getDay()];
+      document.getElementById('dateLabel').textContent = `${d.getDate()} de ${meses[d.getMonth()]}`;
+    }
+
+    /* -------------------------
+       LOCALSTORAGE HELPERS
+    --------------------------*/
+    function loadJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch {
+        return fallback;
+      }
+    }
+    function saveJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    /* -------------------------
+       BLOQUES: RENDER + ESTADO
+    --------------------------*/
+    function renderBlocks() {
+      const container = document.getElementById('blockList');
+      container.innerHTML = '';
+
+      const state = loadJSON(STORAGE_KEY_BLOCKS, {});
+      const todayKey = new Date().toISOString().slice(0,10);
+      const todayState = state[todayKey] || {};
+
+      defaultBlocks.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'block';
+
+        const checked = !!todayState[b.id];
+
+        div.innerHTML = `
+          <div class="block-left">
+            <div class="block-label">${b.label}</div>
+            <div class="block-time">${b.start} – ${b.end}</div>
+          </div>
+          <div class="checkbox ${checked ? 'checked' : ''}"></div>
+        `;
+
+        const cb = div.querySelector('.checkbox');
+        cb.addEventListener('click', () => {
+          const all = loadJSON(STORAGE_KEY_BLOCKS, {});
+          const dayState = all[todayKey] || {};
+          const now = !dayState[b.id];
+          dayState[b.id] = now;
+          all[todayKey] = dayState;
+          saveJSON(STORAGE_KEY_BLOCKS, all);
+          cb.classList.toggle('checked', now);
+        });
+
+        container.appendChild(div);
+      });
+    }
+
+    /* -------------------------
+       HORARIO CLASES HOY
+    --------------------------*/
+    function renderClassSchedule() {
+      const todayKey = getTodayNameKey();
+      const list = document.getElementById('classList');
+      list.innerHTML = '';
+
+      const horario = horarioClases[todayKey] || {};
+      const horas = Object.keys(horario);
+
+      if (horas.length === 0) {
+        const div = document.createElement('div');
+        div.className = 'class-item';
+        div.textContent = 'Hoy no hay clases configuradas.';
+        list.appendChild(div);
+        return;
+      }
+
+      horas.forEach(hora => {
+        const div = document.createElement('div');
+        div.className = 'class-item';
+        div.textContent = `${hora} — ${horario[hora]}`;
+        list.appendChild(div);
+      });
+    }
+
+    /* -------------------------
+       CONFIG: GYM + COMIDAS
+    --------------------------*/
+    function loadConfigForDay(dayKey) {
+      const gymData = loadJSON(STORAGE_KEY_GYM, {});
+      const mealData = loadJSON(STORAGE_KEY_MEALS, {});
+
+      document.getElementById('gymInput').value = gymData[dayKey] || '';
+      document.getElementById('mealInput').value = mealData[dayKey] || '';
+      document.getElementById('gymNote').textContent = gymData[dayKey] ? `Guardado: ${gymData[dayKey]}` : 'Sin rutina guardada.';
+      document.getElementById('mealNote').textContent = mealData[dayKey] ? `Guardado: ${mealData[dayKey]}` : 'Sin comida guardada.';
+    }
+
+    function setupConfigHandlers() {
+      const daySelect = document.getElementById('configDay');
+      daySelect.addEventListener('change', () => {
+        loadConfigForDay(daySelect.value);
+      });
+
+      document.getElementById('saveGym').addEventListener('click', () => {
+        const day = daySelect.value;
+        const val = document.getElementById('gymInput').value.trim();
+        const data = loadJSON(STORAGE_KEY_GYM, {});
+        data[day] = val;
+        saveJSON(STORAGE_KEY_GYM, data);
+        document.getElementById('gymNote').textContent = val ? `Guardado: ${val}` : 'Sin rutina guardada.';
+      });
+
+      document.getElementById('saveMeal').addEventListener('click', () => {
+        const day = daySelect.value;
+        const val = document.getElementById('mealInput').value.trim();
+        const data = loadJSON(STORAGE_KEY_MEALS, {});
+        data[day] = val;
+        saveJSON(STORAGE_KEY_MEALS, data);
+        document.getElementById('mealNote').textContent = val ? `Guardado: ${val}` : 'Sin comida guardada.';
+      });
+    }
+
+    /* -------------------------
+       NOTIFICACIONES (PRUEBA)
+    --------------------------*/
+    function setupNotifications() {
+      const btn = document.getElementById('notifyBtn');
+      btn.addEventListener('click', async () => {
+        if (!('Notification' in window)) {
+          alert('Este navegador no soporta notificaciones.');
+          return;
+        }
+        let perm = Notification.permission;
+        if (perm === 'default') {
+          perm = await Notification.requestPermission();
+        }
+        if (perm === 'granted') {
+          new Notification('Rutina', {
+            body: 'Esto es una prueba de notificación.',
+          });
+        } else {
+          alert('Permiso de notificaciones denegado.');
+        }
+      });
+    }
+
+    /* -------------------------
+       NAVEGACIÓN
+    --------------------------*/
+    document.getElementById('openConfig').addEventListener('click', () => {
+      document.getElementById('mainScreen').classList.add('hidden');
+      document.getElementById('configScreen').classList.remove('hidden');
+      renderClassSchedule();
+      const dayKey = getTodayNameKey();
+      const select = document.getElementById('configDay');
+      if (['dilluns','dimarts','dimecres','dijous','divendres'].includes(dayKey)) {
+        select.value = dayKey;
+      } else {
+        select.value = 'dilluns';
+      }
+      loadConfigForDay(select.value);
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      document.getElementById('configScreen').classList.add('hidden');
+      document.getElementById('mainScreen').classList.remove('hidden');
+    });
+
+    /* -------------------------
+       PWA: REGISTRO SW (BASE)
+    --------------------------*/
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    /* -------------------------
+       INICIO
+    --------------------------*/
+    renderDate();
+    renderBlocks();
+    setupConfigHandlers();
+    setupNotifications();
+  </script>
+</body>
+</html>
