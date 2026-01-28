@@ -64,6 +64,7 @@
       border-radius: 12px;
       background: var(--card);
       border: 1px solid rgba(31,41,55,0.9);
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
     }
     .block-left { display: flex; flex-direction: column; }
     .block-label { font-size: 0.9rem; }
@@ -74,10 +75,25 @@
       border: 1px solid rgba(148,163,184,0.7);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
     }
     .checkbox.checked {
       background: var(--accent);
       border-color: var(--accent);
+    }
+    .checkbox.checked::after {
+      content: "";
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid #0f172a;
+      border-bottom: 2px solid #0f172a;
+      transform: rotate(-45deg);
+    }
+
+    .block.active {
+      border-color: var(--accent);
+      background: rgba(56,189,248,0.08);
+      transform: translateY(-1px);
     }
 
     .config-btn {
@@ -145,6 +161,53 @@
       color: var(--muted);
       margin-top: 4px;
     }
+
+    /* Tarjeta estilo iOS (glassmorphism) */
+    .daily-card {
+      margin-top: 10px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+      animation: cardFade 0.6s ease-out;
+    }
+
+    .daily-card h2 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .daily-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+      font-size: 0.9rem;
+    }
+
+    .daily-icon {
+      width: 20px;
+      height: 20px;
+      stroke: white;
+      opacity: 0.9;
+    }
+
+    .now-block {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.25);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    @keyframes cardFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -157,6 +220,37 @@
         <div class="subtitle" id="dayLabel"></div>
       </div>
       <div class="date" id="dateLabel"></div>
+    </div>
+
+    <!-- Tarjeta resumen diario -->
+    <div id="dailyCard" class="daily-card">
+      <h2>Hoy</h2>
+
+      <div class="daily-row">
+        <!-- Gimnasio -->
+        <svg class="daily-icon" viewBox="0 0 24 24" fill="none">
+          <path d="M4 10h2v4H4zM18 10h2v4h-2zM8 8h2v8H8zM14 8h2v8h-2zM10 11h4v2h-4z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="gymToday">Gimnasio: —</span>
+      </div>
+
+      <div class="daily-row">
+        <!-- Comida -->
+        <svg class="daily-icon" viewBox="0 0 24 24" fill="none">
+          <path d="M6 4v16M10 4v16M18 4c0 3-2 4-2 8 0 4 2 5 2 8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="mealToday">Comida: —</span>
+      </div>
+
+      <div class="daily-row">
+        <!-- Clases -->
+        <svg class="daily-icon" viewBox="0 0 24 24" fill="none">
+          <path d="M4 10l8-4 8 4-8 4-8-4zM4 14l8 4 8-4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="classToday">Clases: —</span>
+      </div>
+
+      <div class="now-block" id="nowBlock">Ahora toca: —</div>
     </div>
 
     <div class="section-title">Bloques del día</div>
@@ -201,9 +295,9 @@
         <div class="note" id="mealNote"></div>
       </div>
 
-      <div class="section-title">Notificaciones</div>
-      <button class="btn-small" id="notifyBtn">Probar notificación</button>
-      <div class="note">En iOS puede que solo funcione si está instalado como app y con permisos activos.</div>
+      <div class="section-title">Notificaciones automáticas</div>
+      <button class="btn-small" id="enableAutoNotif">Activar notificaciones del día</button>
+      <div class="note">Las notificaciones funcionan cuando la app está instalada en tu iPhone.</div>
     </div>
   </div>
 
@@ -255,16 +349,16 @@
        BLOQUES DEL DÍA
     --------------------------*/
     const defaultBlocks = [
-      { id: 'gym', label: 'Gimnasio', start: '08:30', end: '10:00' },
-      { id: 'read', label: 'Lectura', start: '10:30', end: '12:00' },
-      { id: 'house', label: 'Faena / casa', start: '12:00', end: '13:00' },
-      { id: 'class', label: 'Clases', start: '15:00', end: '20:30' },
-      { id: 'relax', label: 'Desconexión', start: '22:00', end: '23:00' }
+      { id: 'gym',   label: 'Gimnasio',      start: '08:30', end: '10:00' },
+      { id: 'read',  label: 'Lectura',       start: '10:30', end: '12:00' },
+      { id: 'house', label: 'Faena / casa',  start: '12:00', end: '13:00' },
+      { id: 'class', label: 'Clases',        start: '15:00', end: '20:30' },
+      { id: 'relax', label: 'Desconexión',   start: '22:00', end: '23:00' }
     ];
 
     const STORAGE_KEY_BLOCKS = 'rutina_bloques';
-    const STORAGE_KEY_GYM = 'rutina_gym';
-    const STORAGE_KEY_MEALS = 'rutina_meals';
+    const STORAGE_KEY_GYM    = 'rutina_gym';
+    const STORAGE_KEY_MEALS  = 'rutina_meals';
 
     function getTodayNameKey() {
       const d = new Date().getDay();
@@ -279,9 +373,6 @@
       document.getElementById('dateLabel').textContent = `${d.getDate()} de ${meses[d.getMonth()]}`;
     }
 
-    /* -------------------------
-       LOCALSTORAGE HELPERS
-    --------------------------*/
     function loadJSON(key, fallback) {
       try {
         const raw = localStorage.getItem(key);
@@ -298,6 +389,20 @@
     /* -------------------------
        BLOQUES: RENDER + ESTADO
     --------------------------*/
+    function getCurrentBlockId() {
+      const now = new Date();
+      const minutes = now.getHours() * 60 + now.getMinutes();
+
+      for (const block of defaultBlocks) {
+        const [sh, sm] = block.start.split(':').map(Number);
+        const [eh, em] = block.end.split(':').map(Number);
+        const start = sh * 60 + sm;
+        const end = eh * 60 + em;
+        if (minutes >= start && minutes <= end) return block.id;
+      }
+      return null;
+    }
+
     function renderBlocks() {
       const container = document.getElementById('blockList');
       container.innerHTML = '';
@@ -305,10 +410,12 @@
       const state = loadJSON(STORAGE_KEY_BLOCKS, {});
       const todayKey = new Date().toISOString().slice(0,10);
       const todayState = state[todayKey] || {};
+      const currentId = getCurrentBlockId();
 
       defaultBlocks.forEach(b => {
         const div = document.createElement('div');
         div.className = 'block';
+        if (b.id === currentId) div.classList.add('active');
 
         const checked = !!todayState[b.id];
 
@@ -401,28 +508,116 @@
     }
 
     /* -------------------------
-       NOTIFICACIONES (PRUEBA)
+       TARJETA RESUMEN DIARIO
     --------------------------*/
-    function setupNotifications() {
-      const btn = document.getElementById('notifyBtn');
-      btn.addEventListener('click', async () => {
-        if (!('Notification' in window)) {
-          alert('Este navegador no soporta notificaciones.');
-          return;
-        }
-        let perm = Notification.permission;
-        if (perm === 'default') {
-          perm = await Notification.requestPermission();
-        }
-        if (perm === 'granted') {
-          new Notification('Rutina', {
-            body: 'Esto es una prueba de notificación.',
-          });
-        } else {
-          alert('Permiso de notificaciones denegado.');
-        }
-      });
+    function getCurrentBlockLabel() {
+      const now = new Date();
+      const minutes = now.getHours() * 60 + now.getMinutes();
+
+      for (const block of defaultBlocks) {
+        const [sh, sm] = block.start.split(':').map(Number);
+        const [eh, em] = block.end.split(':').map(Number);
+        const start = sh * 60 + sm;
+        const end = eh * 60 + em;
+        if (minutes >= start && minutes <= end) return block.label;
+      }
+      return null;
     }
+
+    function renderDailyCard() {
+      const todayKey = getTodayNameKey();
+
+      const gymData = loadJSON(STORAGE_KEY_GYM, {});
+      const mealData = loadJSON(STORAGE_KEY_MEALS, {});
+      const classes = horarioClases[todayKey] || {};
+
+      document.getElementById("gymToday").textContent =
+        "Gimnasio: " + (gymData[todayKey] || "—");
+
+      document.getElementById("mealToday").textContent =
+        "Comida: " + (mealData[todayKey] || "—");
+
+      const classList = Object.values(classes).slice(0, 2).join(", ");
+      document.getElementById("classToday").textContent =
+        "Clases: " + (classList || "—");
+
+      const nowBlock = getCurrentBlockLabel();
+      document.getElementById("nowBlock").textContent =
+        "Ahora toca: " + (nowBlock || "—");
+
+      renderBlocks();
+    }
+
+    setInterval(renderDailyCard, 60000);
+
+    /* -------------------------
+       NOTIFICACIONES PROGRAMADAS
+    --------------------------*/
+    async function requestNotificationPermission() {
+      if (!("Notification" in window)) {
+        alert("Este dispositivo no soporta notificaciones.");
+        return false;
+      }
+
+      let perm = Notification.permission;
+      if (perm === "default") {
+        perm = await Notification.requestPermission();
+      }
+
+      if (perm !== "granted") {
+        alert("No se pueden enviar notificaciones sin permiso.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function scheduleNotification(title, body, hour, minute) {
+      const now = new Date();
+      const target = new Date();
+
+      target.setHours(hour);
+      target.setMinutes(minute);
+      target.setSeconds(0);
+
+      if (target <= now) {
+        target.setDate(target.getDate() + 1);
+      }
+
+      const timeout = target.getTime() - now.getTime();
+
+      setTimeout(() => {
+        new Notification(title, { body });
+        scheduleNotification(title, body, hour, minute);
+      }, timeout);
+    }
+
+    function parseTime(str) {
+      const [h, m] = str.split(":").map(Number);
+      return { h, m };
+    }
+
+    function scheduleDailyNotifications() {
+      if (Notification.permission !== "granted") return;
+
+      defaultBlocks.forEach(block => {
+        const { h: sh, m: sm } = parseTime(block.start);
+        scheduleNotification(
+          "Rutina diaria",
+          `Ahora toca: ${block.label}`,
+          sh,
+          sm
+        );
+      });
+
+      alert("Notificaciones programadas correctamente.");
+    }
+
+    document.getElementById("enableAutoNotif").addEventListener("click", async () => {
+      const allowed = await requestNotificationPermission();
+      if (!allowed) return;
+      scheduleDailyNotifications();
+    });
 
     /* -------------------------
        NAVEGACIÓN
@@ -447,7 +642,7 @@
     });
 
     /* -------------------------
-       PWA: REGISTRO SW (BASE)
+       PWA: REGISTRO SW
     --------------------------*/
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -459,7 +654,7 @@
     renderDate();
     renderBlocks();
     setupConfigHandlers();
-    setupNotifications();
+    renderDailyCard();
   </script>
 </body>
 </html>
