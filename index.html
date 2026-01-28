@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Mi Rutina Diaria</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="manifest" href="manifest.json">
+
   <style>
     :root {
       --bg: #0f172a;
       --card: #111827;
       --accent: #38bdf8;
-      --accent-soft: rgba(56,189,248,0.15);
+      --accent-soft: rgba(56, 189, 248, 0.15);
       --text: #e5e7eb;
       --muted: #9ca3af;
       --success: #22c55e;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
@@ -25,17 +33,38 @@
       justify-content: center;
       padding: 16px;
     }
+
+    /* Animación de entrada de la app */
     .app {
       width: 100%;
       max-width: 480px;
-      background: linear-gradient(145deg, rgba(15,23,42,0.95), rgba(15,23,42,0.85));
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.85));
       border-radius: 18px;
       padding: 16px 16px 20px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.6);
-      border: 1px solid rgba(148,163,184,0.25);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.25);
       backdrop-filter: blur(18px);
+
+      opacity: 0;
+      transform: translateY(8px);
+      animation: appEnter 0.45s ease-out forwards;
     }
-    .hidden { display: none; }
+
+    @keyframes appEnter {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
 
     .header {
       display: flex;
@@ -43,9 +72,22 @@
       align-items: center;
       margin-bottom: 12px;
     }
-    .title { font-size: 1.1rem; font-weight: 600; }
-    .subtitle { font-size: 0.8rem; color: var(--muted); }
-    .date { font-size: 0.8rem; color: var(--muted); text-align: right; }
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .date {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: right;
+    }
 
     .section-title {
       font-size: 0.9rem;
@@ -56,31 +98,98 @@
       letter-spacing: 0.06em;
     }
 
-    .block-list { display: flex; flex-direction: column; gap: 8px; }
+    .block-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Animación de entrada de bloques */
     .block {
       display: flex;
       justify-content: space-between;
       padding: 9px 10px;
       border-radius: 12px;
       background: var(--card);
-      border: 1px solid rgba(31,41,55,0.9);
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+
+      opacity: 0;
+      transform: translateY(4px);
+      animation: blockEnter 0.25s ease-out forwards;
     }
-    .block-left { display: flex; flex-direction: column; }
-    .block-label { font-size: 0.9rem; }
-    .block-time { font-size: 0.75rem; color: var(--muted); }
+
+    .block:nth-child(1) {
+      animation-delay: 0.05s;
+    }
+
+    .block:nth-child(2) {
+      animation-delay: 0.10s;
+    }
+
+    .block:nth-child(3) {
+      animation-delay: 0.15s;
+    }
+
+    .block:nth-child(4) {
+      animation-delay: 0.20s;
+    }
+
+    .block:nth-child(5) {
+      animation-delay: 0.25s;
+    }
+
+    @keyframes blockEnter {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .block-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .block-label {
+      font-size: 0.9rem;
+    }
+
+    .block-time {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
     .checkbox {
-      width: 20px; height: 20px;
+      width: 20px;
+      height: 20px;
       border-radius: 6px;
-      border: 1px solid rgba(148,163,184,0.7);
-      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+
+      transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.08s ease;
     }
+
+    .checkbox:active {
+      transform: scale(0.9);
+    }
+
     .checkbox.checked {
       background: var(--accent);
       border-color: var(--accent);
+      box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.25);
     }
+
     .checkbox.checked::after {
       content: "";
       width: 10px;
@@ -92,7 +201,7 @@
 
     .block.active {
       border-color: var(--accent);
-      background: rgba(56,189,248,0.08);
+      background: rgba(56, 189, 248, 0.08);
       transform: translateY(-1px);
     }
 
@@ -103,28 +212,38 @@
       border-radius: 12px;
       background: var(--accent-soft);
       color: var(--accent);
-      border: 1px solid rgba(56,189,248,0.4);
+      border: 1px solid rgba(56, 189, 248, 0.4);
       cursor: pointer;
       text-align: center;
       font-size: 0.9rem;
     }
 
-    .config-screen { padding: 10px; }
+    /* Pantalla configuración */
+    #configScreen {
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .config-screen {
+      padding: 10px;
+    }
+
     .back-btn {
       margin-bottom: 12px;
       padding: 8px 12px;
       background: var(--card);
       border-radius: 10px;
-      border: 1px solid rgba(148,163,184,0.4);
+      border: 1px solid rgba(148, 163, 184, 0.4);
       color: var(--text);
       cursor: pointer;
       font-size: 0.85rem;
     }
+
     .class-item {
       padding: 8px;
       border-radius: 10px;
       background: var(--card);
-      border: 1px solid rgba(148,163,184,0.3);
+      border: 1px solid rgba(148, 163, 184, 0.3);
       margin-bottom: 6px;
       font-size: 0.9rem;
     }
@@ -132,37 +251,42 @@
     .field-group {
       margin-bottom: 10px;
     }
+
     .field-label {
       font-size: 0.8rem;
       color: var(--muted);
       margin-bottom: 4px;
     }
-    .field-input, .field-select {
+
+    .field-input,
+    .field-select {
       width: 100%;
       padding: 6px 8px;
       border-radius: 8px;
-      border: 1px solid rgba(148,163,184,0.5);
-      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
       color: var(--text);
       font-size: 0.85rem;
     }
+
     .btn-small {
       padding: 6px 10px;
       border-radius: 10px;
-      border: 1px solid rgba(148,163,184,0.6);
-      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
       color: var(--text);
       font-size: 0.8rem;
       cursor: pointer;
       margin-top: 4px;
     }
+
     .note {
       font-size: 0.75rem;
       color: var(--muted);
       margin-top: 4px;
     }
 
-    /* Tarjeta estilo iOS (glassmorphism) */
+    /* Tarjeta estilo iOS */
     .daily-card {
       margin-top: 10px;
       padding: 16px;
@@ -171,7 +295,7 @@
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border: 1px solid rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
       animation: cardFade 0.6s ease-out;
     }
 
@@ -199,18 +323,170 @@
     .now-block {
       margin-top: 12px;
       padding-top: 10px;
-      border-top: 1px solid rgba(255,255,255,0.25);
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
       font-size: 0.95rem;
       font-weight: 600;
     }
 
     @keyframes cardFade {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Estadísticas semanales */
+    .stats-card {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .stats-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .stats-summary {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .stats-canvas {
+      width: 100%;
+      height: 120px;
+    }
+
+    /* Logros */
+    .achievements-card {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .achievement {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 0;
+      opacity: 0.6;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .achievement.unlocked {
+      opacity: 1;
+      transform: translateX(4px);
+    }
+
+    .achievement-icon {
+      font-size: 1.2rem;
+    }
+
+    .achievement-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .achievement-desc {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .exercise-item {
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+
+    .exercise-item strong {
+      color: var(--accent);
+    }
+
+    .exercise-history-item {
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .exercise-history-item:hover {
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .exercise-detail-entry {
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      margin-bottom: 8px;
+      font-size: 0.85rem;
     }
   </style>
 </head>
+
 <body>
+  <!-- PANTALLA GIMNASIO -->
+  <div class="app hidden" id="gymScreen">
+    <div class="config-screen">
+      <div class="back-btn" id="backGym">← Volver</div>
+
+      <div class="section-title">Entrenamiento de hoy</div>
+      <div id="gymRoutineLabel" class="note"></div>
+
+      <div class="section-title">Añadir ejercicio</div>
+
+      <div class="field-group">
+        <div class="field-label">Máquina / ejercicio</div>
+        <input id="exName" class="field-input" placeholder="Ej: Press banca">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Repeticiones</div>
+        <input id="exReps" class="field-input" type="number" placeholder="Ej: 10">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Peso (kg)</div>
+        <input id="exWeight" class="field-input" type="number" placeholder="Ej: 40">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Peso máximo (1RM)</div>
+        <input id="exMax" class="field-input" type="number" placeholder="Ej: 60">
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Notas</div>
+        <input id="exNotes" class="field-input" placeholder="Opcional">
+      </div>
+
+      <button class="btn-small" id="addExercise">Añadir ejercicio</button>
+
+      <div class="section-title">Ejercicios de hoy</div>
+      <div id="exerciseList"></div>
+    </div>
+  </div>
 
   <!-- PANTALLA PRINCIPAL -->
   <div class="app" id="mainScreen">
@@ -227,25 +503,25 @@
       <h2>Hoy</h2>
 
       <div class="daily-row">
-        <!-- Gimnasio -->
         <svg class="daily-icon" viewBox="0 0 24 24" fill="none">
-          <path d="M4 10h2v4H4zM18 10h2v4h-2zM8 8h2v8H8zM14 8h2v8h-2zM10 11h4v2h-4z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 10h2v4H4zM18 10h2v4h-2zM8 8h2v8H8zM14 8h2v8h-2zM10 11h4v2h-4z" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <span id="gymToday">Gimnasio: —</span>
       </div>
 
       <div class="daily-row">
-        <!-- Comida -->
         <svg class="daily-icon" viewBox="0 0 24 24" fill="none">
-          <path d="M6 4v16M10 4v16M18 4c0 3-2 4-2 8 0 4 2 5 2 8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 4v16M10 4v16M18 4c0 3-2 4-2 8 0 4 2 5 2 8" stroke-width="1.5" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
         <span id="mealToday">Comida: —</span>
       </div>
 
       <div class="daily-row">
-        <!-- Clases -->
         <svg class="daily-icon" viewBox="0 0 24 24" fill="none">
-          <path d="M4 10l8-4 8 4-8 4-8-4zM4 14l8 4 8-4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 10l8-4 8 4-8 4-8-4zM4 14l8 4 8-4" stroke-width="1.5" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
         <span id="classToday">Clases: —</span>
       </div>
@@ -255,6 +531,17 @@
 
     <div class="section-title">Bloques del día</div>
     <div class="block-list" id="blockList"></div>
+    <div class="stats-card">
+      <div class="achievements-card">
+        <div class="stats-title">Logros</div>
+        <div id="achievementsList"></div>
+      </div>
+
+      <div class="stats-title">Estadísticas semanales</div>
+      <div class="stats-summary" id="statsSummary">Cargando…</div>
+      <canvas id="statsCanvas" class="stats-canvas"></canvas>
+    </div>
+
 
     <div class="config-btn" id="openConfig">⚙️ Configuración</div>
   </div>
@@ -298,6 +585,30 @@
       <div class="section-title">Notificaciones automáticas</div>
       <button class="btn-small" id="enableAutoNotif">Activar notificaciones del día</button>
       <div class="note">Las notificaciones funcionan cuando la app está instalada en tu iPhone.</div>
+    </div>
+  </div>
+  <!-- PANTALLA HISTORIAL GIMNASIO -->
+  <div class="app hidden" id="gymHistoryScreen">
+    <div class="config-screen">
+      <div class="back-btn" id="backGymHistory">← Volver</div>
+
+      <div class="section-title">Historial semanal</div>
+      <canvas id="gymHistoryCanvas" class="stats-canvas"></canvas>
+
+      <div class="section-title">Ejercicios realizados</div>
+      <div id="gymHistoryList"></div>
+    </div>
+  </div>
+  <!-- PANTALLA DETALLE EJERCICIO -->
+  <div class="app hidden" id="exerciseDetailScreen">
+    <div class="config-screen">
+      <div class="back-btn" id="backExerciseDetail">← Volver</div>
+
+      <div class="section-title" id="exerciseDetailTitle"></div>
+      <canvas id="exerciseProgressCanvas" class="stats-canvas"></canvas>
+
+      <div class="section-title">Entrenamientos</div>
+      <div id="exerciseDetailList"></div>
     </div>
   </div>
 
@@ -349,26 +660,36 @@
        BLOQUES DEL DÍA
     --------------------------*/
     const defaultBlocks = [
-      { id: 'gym',   label: 'Gimnasio',      start: '08:30', end: '10:00' },
-      { id: 'read',  label: 'Lectura',       start: '10:30', end: '12:00' },
-      { id: 'house', label: 'Faena / casa',  start: '12:00', end: '13:00' },
-      { id: 'class', label: 'Clases',        start: '15:00', end: '20:30' },
-      { id: 'relax', label: 'Desconexión',   start: '22:00', end: '23:00' }
+      { id: 'gym', label: 'Gimnasio', start: '08:30', end: '10:00' },
+      { id: 'read', label: 'Lectura', start: '10:30', end: '12:00' },
+      { id: 'house', label: 'Faena / casa', start: '12:00', end: '13:00' },
+      { id: 'class', label: 'Clases', start: '15:00', end: '20:30' },
+      { id: 'relax', label: 'Desconexión', start: '22:00', end: '23:00' }
     ];
 
     const STORAGE_KEY_BLOCKS = 'rutina_bloques';
-    const STORAGE_KEY_GYM    = 'rutina_gym';
-    const STORAGE_KEY_MEALS  = 'rutina_meals';
+    const STORAGE_KEY_GYM = 'rutina_gym';
+    const STORAGE_KEY_MEALS = 'rutina_meals';
+
+    const gymAutoRoutine = {
+      dilluns: "Pecho y hombro",
+      dimarts: "Espalda y bíceps",
+      dimecres: "Pierna",
+      dijous: "Descanso",
+      divendres: "Pecho y hombro",
+      dissabte: "Espalda y bíceps",
+      diumenge: "Descanso"
+    };
 
     function getTodayNameKey() {
       const d = new Date().getDay();
-      return ['diumenge','dilluns','dimarts','dimecres','dijous','divendres','dissabte'][d];
+      return ['diumenge', 'dilluns', 'dimarts', 'dimecres', 'dijous', 'divendres', 'dissabte'][d];
     }
 
     function renderDate() {
       const d = new Date();
-      const dias = ['Diumenge','Dilluns','Dimarts','Dimecres','Dijous','Divendres','Dissabte'];
-      const meses = ['gener','febrer','març','abril','maig','juny','juliol','agost','setembre','octubre','novembre','desembre'];
+      const dias = ['Diumenge', 'Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte'];
+      const meses = ['gener', 'febrer', 'març', 'abril', 'maig', 'juny', 'juliol', 'agost', 'setembre', 'octubre', 'novembre', 'desembre'];
       document.getElementById('dayLabel').textContent = dias[d.getDay()];
       document.getElementById('dateLabel').textContent = `${d.getDate()} de ${meses[d.getMonth()]}`;
     }
@@ -382,6 +703,7 @@
         return fallback;
       }
     }
+
     function saveJSON(key, value) {
       localStorage.setItem(key, JSON.stringify(value));
     }
@@ -408,7 +730,7 @@
       container.innerHTML = '';
 
       const state = loadJSON(STORAGE_KEY_BLOCKS, {});
-      const todayKey = new Date().toISOString().slice(0,10);
+      const todayKey = new Date().toISOString().slice(0, 10);
       const todayState = state[todayKey] || {};
       const currentId = getCurrentBlockId();
 
@@ -420,12 +742,12 @@
         const checked = !!todayState[b.id];
 
         div.innerHTML = `
-          <div class="block-left">
-            <div class="block-label">${b.label}</div>
-            <div class="block-time">${b.start} – ${b.end}</div>
-          </div>
-          <div class="checkbox ${checked ? 'checked' : ''}"></div>
-        `;
+        <div class="block-left">
+          <div class="block-label">${b.label}</div>
+          <div class="block-time">${b.start} – ${b.end}</div>
+        </div>
+        <div class="checkbox ${checked ? 'checked' : ''}"></div>
+      `;
 
         const cb = div.querySelector('.checkbox');
         cb.addEventListener('click', () => {
@@ -436,6 +758,8 @@
           all[todayKey] = dayState;
           saveJSON(STORAGE_KEY_BLOCKS, all);
           cb.classList.toggle('checked', now);
+          renderStats();
+          checkAchievements();
         });
 
         container.appendChild(div);
@@ -478,12 +802,17 @@
 
       document.getElementById('gymInput').value = gymData[dayKey] || '';
       document.getElementById('mealInput').value = mealData[dayKey] || '';
-      document.getElementById('gymNote').textContent = gymData[dayKey] ? `Guardado: ${gymData[dayKey]}` : 'Sin rutina guardada.';
-      document.getElementById('mealNote').textContent = mealData[dayKey] ? `Guardado: ${mealData[dayKey]}` : 'Sin comida guardada.';
+
+      document.getElementById('gymNote').textContent =
+        gymData[dayKey] ? `Guardado: ${gymData[dayKey]}` : 'Sin rutina guardada.';
+
+      document.getElementById('mealNote').textContent =
+        mealData[dayKey] ? `Guardado: ${mealData[dayKey]}` : 'Sin comida guardada.';
     }
 
     function setupConfigHandlers() {
       const daySelect = document.getElementById('configDay');
+
       daySelect.addEventListener('change', () => {
         loadConfigForDay(daySelect.value);
       });
@@ -494,7 +823,9 @@
         const data = loadJSON(STORAGE_KEY_GYM, {});
         data[day] = val;
         saveJSON(STORAGE_KEY_GYM, data);
-        document.getElementById('gymNote').textContent = val ? `Guardado: ${val}` : 'Sin rutina guardada.';
+        document.getElementById('gymNote').textContent =
+          val ? `Guardado: ${val}` : 'Sin rutina guardada.';
+        checkAchievements();
       });
 
       document.getElementById('saveMeal').addEventListener('click', () => {
@@ -503,7 +834,9 @@
         const data = loadJSON(STORAGE_KEY_MEALS, {});
         data[day] = val;
         saveJSON(STORAGE_KEY_MEALS, data);
-        document.getElementById('mealNote').textContent = val ? `Guardado: ${val}` : 'Sin comida guardada.';
+        document.getElementById('mealNote').textContent =
+          val ? `Guardado: ${val}` : 'Sin comida guardada.';
+        checkAchievements();
       });
     }
 
@@ -527,12 +860,11 @@
     function renderDailyCard() {
       const todayKey = getTodayNameKey();
 
-      const gymData = loadJSON(STORAGE_KEY_GYM, {});
       const mealData = loadJSON(STORAGE_KEY_MEALS, {});
       const classes = horarioClases[todayKey] || {};
 
       document.getElementById("gymToday").textContent =
-        "Gimnasio: " + (gymData[todayKey] || "—");
+        "Gimnasio: " + (gymAutoRoutine[todayKey] || "—");
 
       document.getElementById("mealToday").textContent =
         "Comida: " + (mealData[todayKey] || "—");
@@ -546,89 +878,418 @@
         "Ahora toca: " + (nowBlock || "—");
 
       renderBlocks();
+      renderStats();
+      checkAchievements();
     }
 
     setInterval(renderDailyCard, 60000);
 
     /* -------------------------
-       NOTIFICACIONES PROGRAMADAS
+       ESTADÍSTICAS SEMANALES
     --------------------------*/
-    async function requestNotificationPermission() {
-      if (!("Notification" in window)) {
-        alert("Este dispositivo no soporta notificaciones.");
-        return false;
-      }
-
-      let perm = Notification.permission;
-      if (perm === "default") {
-        perm = await Notification.requestPermission();
-      }
-
-      if (perm !== "granted") {
-        alert("No se pueden enviar notificaciones sin permiso.");
-        return false;
-      }
-
-      return true;
-    }
-
-    function scheduleNotification(title, body, hour, minute) {
+    function getWeekDates() {
       const now = new Date();
-      const target = new Date();
+      const day = now.getDay(); // 0 domingo
+      const mondayOffset = day === 0 ? -6 : 1 - day;
 
-      target.setHours(hour);
-      target.setMinutes(minute);
-      target.setSeconds(0);
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + mondayOffset);
 
-      if (target <= now) {
-        target.setDate(target.getDate() + 1);
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        days.push(d.toISOString().slice(0, 10));
       }
-
-      const timeout = target.getTime() - now.getTime();
-
-      setTimeout(() => {
-        new Notification(title, { body });
-        scheduleNotification(title, body, hour, minute);
-      }, timeout);
+      return days;
     }
 
-    function parseTime(str) {
-      const [h, m] = str.split(":").map(Number);
-      return { h, m };
-    }
+    function computeWeeklyStats() {
+      const week = getWeekDates();
+      const state = loadJSON(STORAGE_KEY_BLOCKS, {});
 
-    function scheduleDailyNotifications() {
-      if (Notification.permission !== "granted") return;
+      const totals = [];
+      let totalCompleted = 0;
+      let totalPossible = week.length * defaultBlocks.length;
 
-      defaultBlocks.forEach(block => {
-        const { h: sh, m: sm } = parseTime(block.start);
-        scheduleNotification(
-          "Rutina diaria",
-          `Ahora toca: ${block.label}`,
-          sh,
-          sm
-        );
+      week.forEach(date => {
+        const dayState = state[date] || {};
+        const completed = Object.values(dayState).filter(v => v).length;
+        totals.push(completed);
+        totalCompleted += completed;
       });
 
-      alert("Notificaciones programadas correctamente.");
+      return { totals, totalCompleted, totalPossible };
     }
 
-    document.getElementById("enableAutoNotif").addEventListener("click", async () => {
-      const allowed = await requestNotificationPermission();
-      if (!allowed) return;
-      scheduleDailyNotifications();
-    });
+    function renderStats() {
+      const { totals, totalCompleted, totalPossible } = computeWeeklyStats();
+
+      const percent = totalPossible > 0
+        ? Math.round((totalCompleted / totalPossible) * 100)
+        : 0;
+
+      const summaryEl = document.getElementById("statsSummary");
+      if (summaryEl) {
+        summaryEl.textContent =
+          `Has completado ${totalCompleted} de ${totalPossible} bloques esta semana (${percent}%).`;
+      }
+
+      const canvas = document.getElementById("statsCanvas");
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = canvas.width / 7 - 10;
+      const maxBlocks = defaultBlocks.length || 1;
+
+      totals.forEach((value, i) => {
+        const x = i * (barWidth + 10) + 5;
+        const height = (value / maxBlocks) * canvas.height;
+
+        ctx.fillStyle = "rgba(56,189,248,0.8)";
+        ctx.fillRect(x, canvas.height - height, barWidth, height);
+      });
+    }
 
     /* -------------------------
-       NAVEGACIÓN
+       SISTEMA DE LOGROS
     --------------------------*/
+    const ACHIEVEMENTS_KEY = "rutina_achievements";
+
+    const achievements = [
+      {
+        id: "first_block",
+        title: "Primer paso",
+        desc: "Completaste tu primer bloque.",
+        icon: "🏆",
+        check: () => {
+          const state = loadJSON(STORAGE_KEY_BLOCKS, {});
+          return Object.values(state).some(day =>
+            Object.values(day).some(v => v)
+          );
+        }
+      },
+      {
+        id: "perfect_day",
+        title: "Día perfecto",
+        desc: "Completaste todos los bloques de un día.",
+        icon: "✨",
+        check: () => {
+          const state = loadJSON(STORAGE_KEY_BLOCKS, {});
+          return Object.values(state).some(day =>
+            Object.values(day).length === defaultBlocks.length &&
+            Object.values(day).every(v => v)
+          );
+        }
+      },
+      {
+        id: "week_70",
+        title: "Semana sólida",
+        desc: "Completaste el 70% de los bloques de la semana.",
+        icon: "💪",
+        check: () => {
+          const { totalCompleted, totalPossible } = computeWeeklyStats();
+          return totalPossible > 0 && totalCompleted / totalPossible >= 0.7;
+        }
+      },
+      {
+        id: "food_5",
+        title: "Comidas registradas",
+        desc: "Guardaste comida 5 veces.",
+        icon: "🍽️",
+        check: () => {
+          const meals = loadJSON(STORAGE_KEY_MEALS, {});
+          return Object.values(meals).filter(v => v.trim() !== "").length >= 5;
+        }
+      },
+      {
+        id: "gym_5",
+        title: "Rutina constante",
+        desc: "Guardaste rutina de gimnasio 5 veces.",
+        icon: "🏋️",
+        check: () => {
+          const gym = loadJSON(STORAGE_KEY_GYM, {});
+          return Object.values(gym).filter(v => v.trim() !== "").length >= 5;
+        }
+      },
+      {
+        id: "streak_3",
+        title: "Racha de 3 días",
+        desc: "Completaste bloques 3 días seguidos.",
+        icon: "🔥",
+        check: () => {
+          const state = loadJSON(STORAGE_KEY_BLOCKS, {});
+          const dates = Object.keys(state).sort();
+          let streak = 0;
+
+          for (let i = dates.length - 1; i >= 0; i--) {
+            const completed = Object.values(state[dates[i]]).filter(v => v).length;
+            if (completed > 0) streak++;
+            else break;
+          }
+          return streak >= 3;
+        }
+      },
+      {
+        id: "perfect_week",
+        title: "Semana perfecta",
+        desc: "Completaste todos los bloques de la semana.",
+        icon: "🌟",
+        check: () => {
+          const { totalCompleted, totalPossible } = computeWeeklyStats();
+          return totalCompleted === totalPossible;
+        }
+      },
+      {
+        id: "new_pr",
+        title: "Nuevo récord personal",
+        desc: "Superaste tu 1RM anterior en algún ejercicio.",
+        icon: "🏅",
+        check: () => {
+          const log = loadGymLog();
+          let max = 0;
+          let newMax = 0;
+
+          Object.values(log).forEach(day => {
+            day.forEach(ex => {
+              const m = Number(ex.max || 0);
+              if (m > newMax) newMax = m;
+              if (m > max) max = m;
+            });
+          });
+
+          return newMax > max;
+        }
+      }
+
+    ];
+
+    function renderAchievements() {
+      const unlocked = loadJSON(ACHIEVEMENTS_KEY, {});
+      const container = document.getElementById("achievementsList");
+      if (!container) return;
+
+      container.innerHTML = "";
+
+      achievements.forEach(a => {
+        const div = document.createElement("div");
+        div.className = "achievement " + (unlocked[a.id] ? "unlocked" : "");
+
+        div.innerHTML = `
+        <div class="achievement-icon">${a.icon}</div>
+        <div>
+          <div class="achievement-title">${a.title}</div>
+          <div class="achievement-desc">${a.desc}</div>
+        </div>
+      `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function checkAchievements() {
+      const unlocked = loadJSON(ACHIEVEMENTS_KEY, {});
+      let changed = false;
+
+      achievements.forEach(a => {
+        if (!unlocked[a.id] && a.check()) {
+          unlocked[a.id] = true;
+          changed = true;
+        }
+      });
+
+      if (changed) {
+        saveJSON(ACHIEVEMENTS_KEY, unlocked);
+        renderAchievements();
+      }
+    }
+
+    setInterval(checkAchievements, 60000);
+
+
+    /* -------------------------
+       GIMNASIO — REGISTRO SIMPLE
+    --------------------------*/
+    const STORAGE_KEY_GYM_LOG = "rutina_gym_log";
+
+    function getTodayDateKey() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function loadGymLog() {
+      return loadJSON(STORAGE_KEY_GYM_LOG, {});
+    }
+
+    function saveGymLog(data) {
+      saveJSON(STORAGE_KEY_GYM_LOG, data);
+    }
+
+    function renderGymExercises() {
+      const log = loadGymLog();
+      const today = getTodayDateKey();
+      const list = document.getElementById("exerciseList");
+      if (!list) return;
+
+      list.innerHTML = "";
+
+      const exercises = log[today] || [];
+
+      exercises.forEach(ex => {
+        const div = document.createElement("div");
+        div.className = "exercise-item";
+        div.innerHTML = `
+        <strong>${ex.name}</strong><br>
+        Reps: ${ex.reps} — Peso: ${ex.weight}kg ${ex.max ? `— 1RM: ${ex.max}kg` : ""}<br>
+        <em>${ex.notes || ""}</em>
+      `;
+        list.appendChild(div);
+      });
+    }
+
+    document.getElementById("addExercise").addEventListener("click", () => {
+      const name = document.getElementById("exName").value.trim();
+      const reps = document.getElementById("exReps").value.trim();
+      const weight = document.getElementById("exWeight").value.trim();
+      const max = document.getElementById("exMax").value.trim();
+      const notes = document.getElementById("exNotes").value.trim();
+
+      if (!name || !reps || !weight) {
+        alert("Faltan datos obligatorios.");
+        return;
+      }
+
+      const log = loadGymLog();
+      const today = getTodayDateKey();
+
+      if (!log[today]) log[today] = [];
+
+      log[today].push({ name, reps, weight, max, notes });
+      saveGymLog(log);
+
+      document.getElementById("exName").value = "";
+      document.getElementById("exReps").value = "";
+      document.getElementById("exWeight").value = "";
+      document.getElementById("exMax").value = "";
+      document.getElementById("exNotes").value = "";
+
+      renderGymExercises();
+    });
+    /* ---------------------------------------------------
+   FASE 7 — HISTORIAL SEMANAL DE GIMNASIO
+--------------------------------------------------- */
+
+    function getGymHistoryWeek() {
+      const log = loadGymLog();
+      const week = getWeekDates();
+
+      return week.map(date => ({
+        date,
+        exercises: log[date] || []
+      }));
+    }
+
+    function renderGymHistory() {
+      const week = getGymHistoryWeek();
+      const list = document.getElementById("gymHistoryList");
+      const canvas = document.getElementById("gymHistoryCanvas");
+      const ctx = canvas.getContext("2d");
+
+      list.innerHTML = "";
+
+      // Render lista
+      week.forEach(day => {
+        const div = document.createElement("div");
+        div.className = "exercise-history-item";
+        div.textContent = `${day.date}: ${day.exercises.length} ejercicios`;
+        list.appendChild(div);
+      });
+
+      // Render gráfico
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = canvas.width / 7 - 10;
+
+      week.forEach((day, i) => {
+        const height = (day.exercises.length / 10) * canvas.height;
+        ctx.fillStyle = "rgba(56,189,248,0.8)";
+        ctx.fillRect(i * (barWidth + 10) + 5, canvas.height - height, barWidth, height);
+      });
+    }
+
+    function getExerciseHistory(name) {
+      const log = loadGymLog();
+      const entries = [];
+
+      Object.keys(log).forEach(date => {
+        log[date].forEach(ex => {
+          if (ex.name === name) {
+            entries.push({ date, ...ex });
+          }
+        });
+      });
+
+      return entries;
+    }
+
+    function renderExerciseDetail(name) {
+      const entries = getExerciseHistory(name);
+      const list = document.getElementById("exerciseDetailList");
+      const title = document.getElementById("exerciseDetailTitle");
+      const canvas = document.getElementById("exerciseProgressCanvas");
+      const ctx = canvas.getContext("2d");
+
+      title.textContent = name;
+      list.innerHTML = "";
+
+      // Render lista
+      entries.forEach(e => {
+        const div = document.createElement("div");
+        div.className = "exercise-detail-entry";
+        div.innerHTML = `
+      <strong>${e.date}</strong><br>
+      Reps: ${e.reps} — Peso: ${e.weight}kg — 1RM: ${e.max || "—"}kg
+    `;
+        list.appendChild(div);
+      });
+
+      // Render gráfico
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const maxWeight = Math.max(...entries.map(e => Number(e.max || e.weight)), 1);
+
+      entries.forEach((e, i) => {
+        const h = (Number(e.max || e.weight) / maxWeight) * canvas.height;
+        ctx.fillStyle = "rgba(56,189,248,0.8)";
+        ctx.fillRect(i * 40 + 10, canvas.height - h, 30, h);
+      });
+    }
+
+
+    /* -------------------------
+       NAVEGACIÓN ENTRE PANTALLAS
+    --------------------------*/
+    const mainScreen = document.getElementById('mainScreen');
+    const configScreen = document.getElementById('configScreen');
+    const gymScreen = document.getElementById('gymScreen');
+
     document.getElementById('openConfig').addEventListener('click', () => {
-      document.getElementById('mainScreen').classList.add('hidden');
-      document.getElementById('configScreen').classList.remove('hidden');
+      mainScreen.classList.add('hidden');
+      configScreen.classList.remove('hidden');
+
       renderClassSchedule();
+
       const dayKey = getTodayNameKey();
       const select = document.getElementById('configDay');
-      if (['dilluns','dimarts','dimecres','dijous','divendres'].includes(dayKey)) {
+      if (['dilluns', 'dimarts', 'dimecres', 'dijous', 'divendres'].includes(dayKey)) {
         select.value = dayKey;
       } else {
         select.value = 'dilluns';
@@ -637,15 +1298,68 @@
     });
 
     document.getElementById('backBtn').addEventListener('click', () => {
-      document.getElementById('configScreen').classList.add('hidden');
-      document.getElementById('mainScreen').classList.remove('hidden');
+      configScreen.classList.add('hidden');
+      mainScreen.classList.remove('hidden');
+    });
+
+    document.getElementById("blockList").addEventListener("click", e => {
+      const block = e.target.closest(".block");
+      if (!block) return;
+      const label = block.querySelector(".block-label")?.textContent;
+      if (label === "Gimnasio") {
+        mainScreen.classList.add("hidden");
+        gymScreen.classList.remove("hidden");
+
+        const todayKey = getTodayNameKey();
+        document.getElementById("gymRoutineLabel").textContent =
+          "Rutina de hoy: " + (gymAutoRoutine[todayKey] || "—");
+
+        renderGymExercises();
+      }
+    });
+
+    document.getElementById("backGym").addEventListener("click", () => {
+      gymScreen.classList.add("hidden");
+      mainScreen.classList.remove("hidden");
+    });
+
+    // Abrir historial semanal desde pantalla de gimnasio
+    document.getElementById("gymRoutineLabel").addEventListener("click", () => {
+      gymScreen.classList.add("hidden");
+      gymHistoryScreen.classList.remove("hidden");
+      renderGymHistory();
+    });
+
+    // Volver del historial semanal
+    document.getElementById("backGymHistory").addEventListener("click", () => {
+      gymHistoryScreen.classList.add("hidden");
+      gymScreen.classList.remove("hidden");
+    });
+
+    // Abrir detalle de ejercicio
+    document.getElementById("gymHistoryList").addEventListener("click", e => {
+      const item = e.target.closest(".exercise-history-item");
+      if (!item) return;
+
+      const name = prompt("Nombre del ejercicio para ver detalle:");
+      if (!name) return;
+
+      gymHistoryScreen.classList.add("hidden");
+      exerciseDetailScreen.classList.remove("hidden");
+      renderExerciseDetail(name);
+    });
+
+    // Volver del detalle
+    document.getElementById("backExerciseDetail").addEventListener("click", () => {
+      exerciseDetailScreen.classList.add("hidden");
+      gymHistoryScreen.classList.remove("hidden");
     });
 
     /* -------------------------
        PWA: REGISTRO SW
     --------------------------*/
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker.register('sw.js').catch(() => { });
     }
 
     /* -------------------------
@@ -655,6 +1369,114 @@
     renderBlocks();
     setupConfigHandlers();
     renderDailyCard();
+    renderStats();
+    renderAchievements();
+    checkAchievements();
+
+    configScreen.classList.add('hidden');
+    configScreen.style.opacity = '0';
+    gymScreen.classList.add('hidden');
+    window.addEventListener("offline", () => {
+      alert("Estás sin conexión. La app funciona en modo offline.");
+    });
+    /* ---------------------------------------------------
+       FASE 11 — COMPARATIVA ENTRE SEMANAS
+    --------------------------------------------------- */
+
+    function getLastWeekDates() {
+      const now = new Date();
+      const day = now.getDay();
+      const mondayOffset = day === 0 ? -6 : 1 - day;
+
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + mondayOffset - 7);
+
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        days.push(d.toISOString().slice(0, 10));
+      }
+      return days;
+    }
+
+    function computeLastWeekStats() {
+      const week = getLastWeekDates();
+      const state = loadJSON(STORAGE_KEY_BLOCKS, {});
+
+      let total = 0;
+
+      week.forEach(date => {
+        const dayState = state[date] || {};
+        total += Object.values(dayState).filter(v => v).length;
+      });
+
+      return total;
+    }
+
+    function compareWeeks() {
+      const thisWeek = computeWeeklyStats().totalCompleted;
+      const lastWeek = computeLastWeekStats();
+
+      const diff = thisWeek - lastWeek;
+
+      if (diff > 0) {
+        console.log(`Has mejorado ${diff} bloques respecto a la semana pasada.`);
+      } else if (diff < 0) {
+        console.log(`Has hecho ${Math.abs(diff)} bloques menos que la semana pasada.`);
+      } else {
+        console.log("Has mantenido el mismo rendimiento que la semana pasada.");
+      }
+    }
+
+    setInterval(compareWeeks, 60000);
+    compareWeeks();
+
+    /* ---------------------------------------------------
+   FASE 16 — NOTIFICACIONES INTELIGENTES
+--------------------------------------------------- */
+
+    function notify(message) {
+      if (Notification.permission === "granted") {
+        new Notification("Rutina diaria", { body: message });
+      }
+    }
+
+    function checkSmartNotifications() {
+      const todayKey = getTodayNameKey();
+      const state = loadJSON(STORAGE_KEY_BLOCKS, {});
+      const today = state[new Date().toISOString().slice(0, 10)] || {};
+
+      // Si hoy toca pierna
+      if (gymAutoRoutine[todayKey] === "Pierna") {
+        notify("Hoy toca pierna. No te escapes.");
+      }
+
+      // Si llevas 2 días sin entrenar
+      const dates = Object.keys(state).sort();
+      let noGym = 0;
+
+      for (let i = dates.length - 1; i >= 0; i--) {
+        const d = dates[i];
+        const blocks = state[d];
+        if (blocks.gym) break;
+        noGym++;
+      }
+
+      if (noGym >= 2) {
+        notify("Llevas 2 días sin entrenar. Vuelve a la rutina.");
+      }
+
+      // Si no has registrado comida hoy
+      const meals = loadJSON(STORAGE_KEY_MEALS, {});
+      if (!meals[todayKey]) {
+        notify("No has registrado la comida de hoy.");
+      }
+    }
+
+    setInterval(checkSmartNotifications, 60 * 60 * 1000);
+
   </script>
 </body>
+
 </html>
